@@ -45,6 +45,22 @@ def obtener_cuentas_por_cobrar(nombre_institucion, mes):
         cursor.execute(query, [nombre_institucion, mes])
         rows = cursor.fetchall()
 
-    return rows  # Esta será una lista de tuplas con los resultados
+    # Convertir los valores Decimal a float antes de retornar
+    processed_rows = [
+        (
+            float(row[0]),  # monto_recibo
+            row[1],         # mes
+            float(row[2]),  # valor_detalle
+            row[3],         # estudiante_id
+            row[4],         # nombre_estudiante
+            row[5],         # nombre_grado
+            row[6],         # nombre_institucion
+            row[7],         # nombre_concepto
+            row[8]          # codigo
+        )
+        for row in rows
+    ]
+
+    return processed_rows
 
 

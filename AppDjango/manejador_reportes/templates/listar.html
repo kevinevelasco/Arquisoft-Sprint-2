@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Cuentas por Cobrar</title>
+</head>
+<body>
+    <h1>Reporte de Cuentas por Cobrar</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Monto Recibo</th>
+                <th>Mes</th>
+                <th>Valor Detalle</th>
+                <th>Estudiante</th>
+                <th>Grado</th>
+                <th>Institución</th>
+                <th>Concepto</th>
+                <th>Código</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if cuentas_por_cobrar %}
+                {% for cuenta in cuentas_por_cobrar %}
+                    <tr>
+                        <td>{{ cuenta.0 }}</td> <!-- monto_recibo -->
+                        <td>{{ cuenta.1 }}</td> <!-- mes -->
+                        <td>{{ cuenta.2 }}</td> <!-- valor_detalle -->
+                        <td>{{ cuenta.3 }} - {{ cuenta.4 }}</td> <!-- estudiante_id y nombre_estudiante -->
+                        <td>{{ cuenta.5 }}</td> <!-- nombre_grado -->
+                        <td>{{ cuenta.6 }}</td> <!-- nombre_institucion -->
+                        <td>{{ cuenta.7 }}</td> <!-- nombre_concepto -->
+                        <td>{{ cuenta.8 }}</td> <!-- código -->
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8">No se encontraron resultados.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>
