@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: django
+    build:
+        context: .
+        dockerfile: Dockerfile
+    command: python3 AppDjango/manage.py runserver 0.0.0.0:9000
+    volumes:
+      - .:/usr/app
+    ports:
+      - "9000:9000"

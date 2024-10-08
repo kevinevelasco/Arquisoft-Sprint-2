@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'manejador_facturacion',
     'manejador_batch_processing',
     'manejador_reportes',
-    'manejador_logs'
+    'manejador_logs',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -84,11 +85,21 @@ WSGI_APPLICATION = 'AppDjango.wsgi.application'
 DATABASES = {
      "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "ofipensiones",
+        "NAME": "ofiprueba",
         "USER": "kevinevelasco",
         "PASSWORD": "velascop",
-        "HOST": "localhost",
+        "HOST": "host.docker.internal",
         "PORT": "5432",
+    }
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://34.28.246.132:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
@@ -164,5 +175,9 @@ LOGGING = {
         },
     },
 }
+
+CRONJOBS = [
+    ('* * * * *', 'manejador_batch_processing.management.commands.report-generator')
+]
 
 

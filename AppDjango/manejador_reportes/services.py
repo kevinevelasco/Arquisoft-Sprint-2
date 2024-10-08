@@ -8,6 +8,7 @@ from manejador_facturacion.models import ReciboCobro, ReciboPago
 from django.db import connection
 
 def obtener_cuentas_por_cobrar(nombre_institucion, mes):
+    print("Hit the DB")
     query = """
     SELECT 
         rc.nmonto AS monto_recibo,
@@ -45,19 +46,19 @@ def obtener_cuentas_por_cobrar(nombre_institucion, mes):
         cursor.execute(query, [nombre_institucion, mes])
         rows = cursor.fetchall()
 
-    # Convertir los valores Decimal a float antes de retornar
+    # Convertir los valores a un formato más legible
     processed_rows = [
-        (
-            float(row[0]),  # monto_recibo
-            row[1],         # mes
-            float(row[2]),  # valor_detalle
-            row[3],         # estudiante_id
-            row[4],         # nombre_estudiante
-            row[5],         # nombre_grado
-            row[6],         # nombre_institucion
-            row[7],         # nombre_concepto
-            row[8]          # codigo
-        )
+        {
+            "monto_recibo": float(row[0]),  # monto_recibo
+            "mes": row[1],                   # mes
+            "valor_detalle": float(row[2]),  # valor_detalle
+            "estudiante_id": row[3],         # estudiante_id
+            "nombre_estudiante": row[4],     # nombre_estudiante
+            "nombre_grado": row[5],          # nombre_grado
+            "nombre_institucion": row[6],    # nombre_institucion
+            "nombre_concepto": row[7],       # nombre_concepto
+            "codigo": row[8]                 # codigo
+        }
         for row in rows
     ]
 
