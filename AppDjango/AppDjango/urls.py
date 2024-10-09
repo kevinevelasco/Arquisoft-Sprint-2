@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,7 @@ urlpatterns = [
     path('manejador_batch_processing/', include('manejador_batch_processing.urls')),
     path('manejador_reportes/', include('manejador_reportes.urls')),
     path('manejador_logs/', include('manejador_logs.urls')),
-    path('', RedirectView.as_view(url='/admin/', permanent=False))
+    path('', RedirectView.as_view(url='/admin/', permanent=False)),
+    path('health-check/', views.healthCheck),
 ]
 
