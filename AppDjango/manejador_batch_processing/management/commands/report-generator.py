@@ -28,7 +28,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             # Conectar a Redis
-            r = redis.StrictRedis(host='34.28.246.132', port=6379, db=0)
+            r = redis.StrictRedis(host='10.128.0.5', port=6379, db=0)
 
             # Probar almacenando un valor
             test_key = 'test_key'
