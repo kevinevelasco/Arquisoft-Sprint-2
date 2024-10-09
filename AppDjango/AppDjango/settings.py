@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-y6x7xv3e(9htms$=ezm)s)ntz6a8^3u%w7l=p$m8vy#y68#v!c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'AppDjango.wsgi.application'
 DATABASES = {
      "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "ofiprueba",
-        "USER": "kevinevelasco",
-        "PASSWORD": "velascop",
-        "HOST": "host.docker.internal",
+        "NAME": "ofipensiones",
+        "USER": "arqui_user",
+        "PASSWORD": "isis2503",
+        "HOST": "10.128.0.2",
         "PORT": "5432",
     }
 }
@@ -96,7 +96,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://34.28.246.132:6379/1",
+        "LOCATION": "redis://34.27.159.61:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
