@@ -1,29 +1,33 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from .services import obtener_cuentas_por_cobrar
-from django.core.cache import cache
+import redis
+import json
 
 def generar_reporte(request, nombre_institucion, mes):
-    # Crear una clave única para la caché basada en los parámetros del request
     key = f"cuentas_por_cobrar:{nombre_institucion}:{mes}"
+    print(f"Key: {key}")
 
-    # Intentar recuperar los datos desde Redis
-    print(key)
-    cuentas_por_cobrar = cache.get(key)
-    print(cuentas_por_cobrar)
+    r = redis.StrictRedis(host='10.128.0.5', port=6379, db=0)
+    cuentas_por_cobrar = r.get(key)
 
-    # Si no se encontraron en Redis, ejecutar la función para obtenerlas
-    if cuentas_por_cobrar is None:
-        print("Datos no encontrados en Redis, ejecutando la función...")
-        cuentas_por_cobrar = obtener_cuentas_por_cobrar(nombre_institucion, mes)
-
-        # Guardar los resultados en Redis por 24 horas
-        cache.set(key, cuentas_por_cobrar, timeout=60*60*24)
-    else:
+    if cuentas_por_cobrar is not None:
+        cuentas_por_cobrar = json.loads(cuentas_por_cobrar.decode('utf-8'))
         print("Hit Redis")
+    else:
+        print("No se encontraron datos en Redis, ejecutando la función...")
+        nombre_institucion_con_espacios = nombre_institucion.replace('_', ' ')
+        mes_con_espacios = mes.replace('_', ' ')
+        
+        try:
+            cuentas_por_cobrar = obtener_cuentas_por_cobrar(nombre_institucion_con_espacios, mes_con_espacios)
+            print("Datos obtenidos de la función:", cuentas_por_cobrar)
+            r.set(key, json.dumps(cuentas_por_cobrar), ex=60 * 60 * 24)
+        except Exception as e:
+            print(f"Error al obtener cuentas por cobrar: {e}")
+            cuentas_por_cobrar = []
 
-    # Pasar los resultados a la plantilla
     return render(request, 'listar.html', {'cuentas_por_cobrar': cuentas_por_cobrar})
 
 def home(request):
-    return HttpResponse("Bienvenido a la aplicación")
+    return JsonResponse({"message": "Bienvenido a la aplicación"})

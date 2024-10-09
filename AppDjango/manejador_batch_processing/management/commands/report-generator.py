@@ -46,30 +46,33 @@ class Command(BaseCommand):
             # Generar reportes de cuentas por cobrar
             logger.info("Iniciando la generación de reportes...")
             for institucion in Institucion.objects.all():
-                print(f"Procesando institución: {institucion.nombreInstitucion}")
+                # Reemplazar espacios en el nombre de la institución por guiones bajos
+                nombre_institucion_limpio = institucion.nombreInstitucion.replace(' ', '_')
+                print(f"Procesando institución: {nombre_institucion_limpio}")
+
                 for mes_nombre, mes_num in self.MESES:
+                    # Reemplazar espacios en el nombre del mes por guiones bajos (en caso de ser necesario)
+                    mes_nombre_limpio = mes_nombre.replace(' ', '_')
+
                     cuentas_por_cobrar = obtener_cuentas_por_cobrar(institucion.nombreInstitucion, mes_nombre)
-                    key = f"cuentas_por_cobrar:{institucion.nombreInstitucion}:{mes_nombre}"
+                    key = f"cuentas_por_cobrar:{nombre_institucion_limpio}:{mes_nombre_limpio}"
                     print(f"Key: {key}")
 
                     # Verificar si se obtuvieron cuentas por cobrar
-                    logger.info(
-                        f"Cuentas por cobrar para {institucion.nombreInstitucion} en {mes_nombre}: {cuentas_por_cobrar}")
+                    logger.info(f"Cuentas por cobrar para {nombre_institucion_limpio} en {mes_nombre_limpio}: {cuentas_por_cobrar}")
                     if cuentas_por_cobrar:  # Solo procede si hay datos
                         # Convertir todos los datos a JSON
                         cuentas_json = json.dumps(cuentas_por_cobrar)  # Convertir a JSON
 
                         try:
                             # Usar 'ex' en lugar de 'timeout' para establecer la expiración
-                            result = r.set(key, cuentas_json,
-                                           ex=60 * 60 * 24)  # Guardar toda la información por 24 horas
+                            result = r.set(key, cuentas_json, ex=60 * 60 * 24)  # Guardar toda la información por 24 horas
                             print(result)  # Imprimir el resultado de la operación de caché
                             logger.info(f"Guardado en Redis: {key} con datos: {cuentas_json}")
                         except Exception as e:
                             logger.error(f"Error al guardar en Redis: {e}")
                     else:
-                        logger.warning(
-                            f"No se encontraron cuentas por cobrar para {institucion.nombreInstitucion} en {mes_nombre}.")
+                        logger.warning(f"No se encontraron cuentas por cobrar para {nombre_institucion_limpio} en {mes_nombre_limpio}.")
 
         except redis.exceptions.ConnectionError as e:
             print(f"Failed to connect to Redis: {e}")

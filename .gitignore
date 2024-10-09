@@ -1,3 +1,4 @@
 /.idea
-/requirements.txt
+debug.log
+cron.log
 /venv
