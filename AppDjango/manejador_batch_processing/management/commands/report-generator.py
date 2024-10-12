@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from manejador_reportes.services import obtener_cuentas_por_cobrar
+from manejador_reportes.services import obtener_cuentas_por_cobrar, obtener_cartera_general
 from manejador_cronogramas.models import Institucion
 from django.core.cache import cache
 import logging
@@ -30,19 +30,6 @@ class Command(BaseCommand):
             # Conectar a Redis
             r = redis.StrictRedis(host='10.128.0.5', port=6379, db=0)
 
-            # Probar almacenando un valor
-            test_key = 'test_key'
-            test_value = 'Hello, Redis!'
-            r.set(test_key, test_value)
-
-            # Intentar recuperar el valor almacenado
-            retrieved_value = r.get(test_key)
-
-            if retrieved_value:
-                print(f"Connection to Redis successful! Stored value: {retrieved_value.decode('utf-8')}")
-            else:
-                print("Failed to store or retrieve data from Redis.")
-
             # Generar reportes de cuentas por cobrar
             logger.info("Iniciando la generación de reportes...")
             for institucion in Institucion.objects.all():
@@ -55,15 +42,21 @@ class Command(BaseCommand):
                     mes_nombre_limpio = mes_nombre.replace(' ', '_')
 
                     cuentas_por_cobrar = obtener_cuentas_por_cobrar(institucion.nombreInstitucion, mes_nombre)
+                    cartera_general = obtener_cartera_general(institucion.nombreInstitucion, mes_nombre)
+
                     key = f"cuentas_por_cobrar:{nombre_institucion_limpio}:{mes_nombre_limpio}"
+                    secondKey = f"cartera_general:{nombre_institucion_limpio}:{mes_nombre_limpio}"
+
                     print(f"Key: {key}")
+                    print(f"Second Key: {secondKey}")
 
                     # Verificar si se obtuvieron cuentas por cobrar
                     logger.info(f"Cuentas por cobrar para {nombre_institucion_limpio} en {mes_nombre_limpio}: {cuentas_por_cobrar}")
+                    logger.info(f"Cartera general para {nombre_institucion_limpio} en {mes_nombre_limpio}: {cartera_general}")
+
                     if cuentas_por_cobrar:  # Solo procede si hay datos
                         # Convertir todos los datos a JSON
                         cuentas_json = json.dumps(cuentas_por_cobrar)  # Convertir a JSON
-
                         try:
                             # Usar 'ex' en lugar de 'timeout' para establecer la expiración
                             result = r.set(key, cuentas_json, ex=60 * 60 * 24)  # Guardar toda la información por 24 horas
@@ -73,6 +66,16 @@ class Command(BaseCommand):
                             logger.error(f"Error al guardar en Redis: {e}")
                     else:
                         logger.warning(f"No se encontraron cuentas por cobrar para {nombre_institucion_limpio} en {mes_nombre_limpio}.")
+                    if cartera_general:
+                        cartera_json = json.dumps(cartera_general)
+                        try:
+                            result = r.set(secondKey, cartera_json, ex=60 * 60 * 24)
+                            print(result)
+                            logger.info(f"Guardado en Redis: {secondKey} con datos: {cartera_json}")
+                        except Exception as e:
+                            logger.error(f"Error al guardar en Redis: {e}")
+                    else:
+                        logger.warning(f"No se encontraron datos de cartera general para {nombre_institucion_limpio} en {mes_nombre_limpio}.")
 
         except redis.exceptions.ConnectionError as e:
             print(f"Failed to connect to Redis: {e}")

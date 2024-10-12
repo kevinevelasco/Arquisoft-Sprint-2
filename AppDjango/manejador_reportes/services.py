@@ -65,3 +65,46 @@ def obtener_cuentas_por_cobrar(nombre_institucion, mes):
     return processed_rows
 
 
+def obtener_cartera_general(nombre_institucion, mes):
+    print("Hit the DB")
+    query = """
+    SELECT 
+    SUM(rc.nmonto) AS total_deuda
+    FROM 
+        public.manejador_facturacion_recibocobro rc
+    JOIN 
+        public.manejador_facturacion_recibocobro_detalles_cobro rcdc ON rc.id = rcdc.recibocobro_id
+    JOIN 
+        public.manejador_cronogramas_detallecobrocurso dc ON rcdc.detallecobrocurso_id = dc.id
+    LEFT JOIN 
+        public.manejador_facturacion_recibopago rp ON rc.id = rp.recibo_cobro_id
+    JOIN 
+        public.manejador_cronogramas_estudiante es ON rc.estudiante_id = es.id
+    JOIN 
+        public.manejador_cronogramas_curso c ON es."cursoEstudiante_id" = c.id
+    JOIN 
+        public.manejador_cronogramas_institucion i ON c.institucion_id = i.id
+    JOIN 
+        public.manejador_cronogramas_cronogramabase cb ON dc.cronograma_curso_id = cb.id
+    WHERE
+        i."nombreInstitucion" = %s AND
+        dc.mes = %s AND
+        rp.id IS NULL;
+    """
+
+    with connection.cursor() as cursor:
+        cursor.execute(query, [nombre_institucion, mes])
+        rows = cursor.fetchall()
+
+    # Convertir los valores a un formato más legible
+    processed_rows = [
+        {
+            "institucion": nombre_institucion,
+            "mes": mes,
+            "total_deuda": float(row[0])  # total_deuda
+        }
+        for row in rows
+    ]
+
+    return processed_rows
+
