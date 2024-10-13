@@ -101,10 +101,11 @@ def obtener_cartera_general(nombre_institucion, mes):
         {
             "institucion": nombre_institucion,
             "mes": mes,
-            "total_deuda": float(row[0])  # total_deuda
+            "total_deuda": float(row[0]) if row[0] is not None else 0.0  # Manejar None
         }
         for row in rows
     ]
 
     return processed_rows
+
 
