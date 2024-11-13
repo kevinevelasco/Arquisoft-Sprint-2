@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conceptos de Pago</title>
+</head>
+<body>
+    <h1>Listado de conceptos de pago de {{ estudiante.nombreEstudiante }}</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Monto a Pagar</th>
+                <th>Monto Pagado</th>
+                <th>Estado de Pago</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for concepto in conceptos_pago %}
+                <tr>
+                    <td>{{ concepto.mes }}</td>
+                    <td>{{ concepto.monto }}</td>
+                    <td>{{ concepto.monto_pagado }}</td>
+                    <td>{{ concepto.estado_pago }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
