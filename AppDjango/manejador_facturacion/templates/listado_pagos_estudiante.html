@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Pagos - {{ estudiante.nombreEstudiante }}</title>
+    <style>
+        /* Estilo para el mensaje de error */
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Listado de Pagos para {{ estudiante.nombreEstudiante }}</h1>
+
+    <h2>Detalles de pagos por mes</h2>
+
+    <form action="{% url 'manejador_facturacion:pagar' %}" method="POST">
+    {% csrf_token %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Detalle</th>
+                <th>Monto Total</th>
+                <th>Monto Pagado</th>
+                <th>Saldo Pendiente</th>
+                <th>Recibo Cobro ID</th>
+                <th>Recibo Pago ID</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in listado_detalles %}
+            <tr>
+                <td>{{ detalle.detalle }}</td>
+                <td>${{ detalle.monto_total }}</td>
+                <td>${{ detalle.monto_pagado }}</td>
+                <td>${{ detalle.saldo }}</td>
+                <td>{{ detalle.recibo_cobro_id }}</td>
+                <td>{{ detalle.recibo_pago_id }}</td>
+
+                {% if detalle.saldo > 0 and detalle.recibo_pago_id is none %}
+                    <td>
+                        <!-- Formulario para ingresar el pago -->
+                        <input type="number" name="pago_{{ detalle.recibo_cobro_id }}" value="{{ detalle.saldo }}" min="0" step="any" required disabled>
+                        <button type="submit" name="pagar_{{ detalle.recibo_cobro_id }}" value="{{ detalle.recibo_cobro_id }}">Agregar pago</button>
+                    </td>
+                {% else %}
+                    <td>No hay saldo pendiente o ya se ha pagado</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+
+
+
+    <br>
+    <a href="{{ request.META.HTTP_REFERER }}">Volver al inicio</a>
+</body>
+</html>
