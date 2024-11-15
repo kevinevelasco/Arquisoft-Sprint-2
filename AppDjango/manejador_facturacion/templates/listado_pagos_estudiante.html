@@ -4,18 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listado de Pagos - {{ estudiante.nombreEstudiante }}</title>
-    <style>
-        /* Estilo para el mensaje de error */
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
 </head>
 <body>
     <h1>Listado de Pagos para {{ estudiante.nombreEstudiante }}</h1>
-
-    <h2>Detalles de pagos por mes</h2>
 
     <form action="{% url 'manejador_facturacion:pagar' %}" method="POST">
     {% csrf_token %}
@@ -41,9 +32,8 @@
                 <td>{{ detalle.recibo_cobro_id }}</td>
                 <td>{{ detalle.recibo_pago_id }}</td>
 
-                {% if detalle.saldo > 0 and detalle.recibo_pago_id is none %}
+                {% if detalle.saldo > 0 and not detalle.recibo_pago_id %}
                     <td>
-                        <!-- Formulario para ingresar el pago -->
                         <input type="number" name="pago_{{ detalle.recibo_cobro_id }}" value="{{ detalle.saldo }}" min="0" step="any" required disabled>
                         <button type="submit" name="pagar_{{ detalle.recibo_cobro_id }}" value="{{ detalle.recibo_cobro_id }}">Agregar pago</button>
                     </td>
@@ -55,8 +45,6 @@
         </tbody>
     </table>
 </form>
-
-
 
     <br>
     <a href="{{ request.META.HTTP_REFERER }}">Volver al inicio</a>

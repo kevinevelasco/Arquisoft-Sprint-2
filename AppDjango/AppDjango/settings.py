@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'manejador_reportes',
     'manejador_logs',
     'django_crontab',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -179,5 +180,26 @@ LOGGING = {
 CRONJOBS = [
     ('* * * * *', 'manejador_batch_processing.management.commands.report-generator')
 ]
+
+LOGIN_URL = "/login/auth0"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "https://dev-73advmhx411p43vz.us.auth0.com/v2/logout?returnTo=http%3A%2F%2F104.154.191.162:8080"
+
+SOCIAL_AUTH_TRAILING_SLASH = False  # Remove end slash from routes
+SOCIAL_AUTH_AUTH0_DOMAIN = 'dev-73advmhx411p43vz.us.auth0.com'
+SOCIAL_AUTH_AUTH0_KEY = 'U9yCcgGMaZWzMz92AY9PVSDvEcaoxbtl'
+SOCIAL_AUTH_AUTH0_SECRET = 'eDF2-rr5GXWk3m_gOacgdUA2-5mRUWAMeLMrSDStriRd7-5NEUsz7PP8CRp-d6wc'
+
+SOCIAL_AUTH_AUTH0_SCOPE = [
+    'openid',
+    'profile',
+    'email',
+    'role',
+]
+
+AUTHENTICATION_BACKENDS = {
+    'AppDjango.auth0backend.Auth0',
+    'django.contrib.auth.backends.ModelBackend',
+}
 
 

@@ -28,5 +28,7 @@ urlpatterns = [
     path('manejador_logs/', include('manejador_logs.urls')),
     path('', RedirectView.as_view(url='/admin/', permanent=False)),
     path('health-check/', views.healthCheck),
+    path(r'', include('django.contrib.auth.urls')),
+    path(r'', include('social_django.urls')),
 ]
 
