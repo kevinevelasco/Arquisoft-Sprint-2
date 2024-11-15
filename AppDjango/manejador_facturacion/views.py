@@ -31,26 +31,27 @@ def obtener_institucion_por_estudiante_id(estudiante_id):
 
 # Función para verificar el nickname e institución en la API
 def verificar_institucion(nickname, nombre_institucion):
-    # url = f"http://10.128.0.7:8000/instituciones/institution/{nickname}/"
-    # try:
-    #     response = requests.get(url)
-    #     data = response.json()
+    url = f"http://10.128.0.7:8080/instituciones/institution/{nickname}/"
+    try:
+        response = requests.get(url)
+        data = response.json()
         
-    #     # Si devuelve error, la verificación falla
-    #     if 'error' in data:
-    #         return False
+        # Si devuelve error, la verificación falla
+        if 'error' in data:
+            return False
         
-    #     # Verifica si la institución recibida coincide con la proporcionada
-    #     return data.get("institution") == nombre_institucion
-    # except requests.RequestException as e:
-    #     print(f"Error al verificar la institución: {e}")
-    #     return False
-    credenciales_validas = {
-        'aux-jose-1': 'Western_Peaks_Elementary',
-        'aux-camila-1': 'Ravenna_High_School'
-    }
+        # Verifica si la institución recibida coincide con la proporcionada
+        print("Se obtienen los datos de la API:", data, "con la URL de la API:", url)
+        return data.get("institution") == nombre_institucion
+    except requests.RequestException as e:
+        print(f"Error al verificar la institución: {e}")
+        return False
+    # credenciales_validas = {
+    #     'aux-jose-1': 'Western_Peaks_Elementary',
+    #     'aux-camila-1': 'Ravenna_High_School'
+    # }
     
-    return credenciales_validas.get(nickname) == nombre_institucion
+    # return credenciales_validas.get(nickname) == nombre_institucion
 
 @login_required
 def listado_pagos_estudiante(request, estudiante_id):
