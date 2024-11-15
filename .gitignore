@@ -3,3 +3,4 @@ debug.log
 cron.log
 /venv
 *.pyc
+**.pyc
