@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+SECURE_SSL_REDIRECT = False
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'manejador_logs',
     'django_crontab',
     'social_django',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://34.54.32.180',  # Reemplaza con la IP o dominio de tu balanceador de carga
 ]
 
 MIDDLEWARE = [
